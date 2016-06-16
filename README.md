@@ -40,8 +40,8 @@ $posts = $example->get_posts( $args );
 - *date_published (datetime)*
 - *post_type (string)*
 
-..- post (default)  
-..- page  
+	..- post (default)  
+	..- page  
 
 - *slug (string)*
 
