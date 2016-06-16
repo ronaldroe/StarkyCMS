@@ -39,10 +39,8 @@ $posts = $example->get_posts( $args );
 - *date_created (datetime)*
 - *date_published (datetime)*
 - *post_type (string)*
-
 	- post (default)  
 	- page  
-
 - *slug (string)*
 
 ###*post_type (string)*
