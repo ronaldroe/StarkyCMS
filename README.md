@@ -3,12 +3,12 @@
 
 # Documentation
 
-###*Starky( array $args = null )*
+###*Starky( array $args = [] )*
 - Base class. Accepts an expanded set of the StarkyCMS standard args associative array. See args documentation for list of accepted arguments.
 
 
 ##CRUD Operations
-###*get_posts( array $args = null )*
+###*get_posts( array $args = [] )*
 - Return type: array
 - Public method available on a Starky instance.
 - Accepts StarkyCMS standard args associative array. See args documentation for list of accepted arguments.
@@ -24,8 +24,24 @@ $posts = $example->get_posts( $args );
 
 
 
+##AJAX Operations
+###*ajax_get_posts( array $args = [] )*
+- Return type: JSON-formatted data
+- Public method available on a Starky instance.
+- May be used the same way as get_posts(). The only difference is return format.
+- Prioritizes inputs for arguments as follows:
+	1. POST
+	2. GET
+	3. $args
+Thus, if $args is passed to the function, but a POST value with the same key exists, the POST value will be used.
+- Accepts StarkyCMS standard args associative array. See args documentation for list of accepted arguments.
+```PHP
+$example = new Starky();
 
-
+$example->ajax_get_posts( $_POST );
+```
+This example will use the contents of PHP's $_POST superglobal as $args input and echo back the posts as a JSON object.
+Note that no arguments are required. All data may be passed as POST or GET requests.
 
 
 
@@ -63,3 +79,5 @@ $posts = $example->get_posts( $args );
 ###*slug (string)*
 
 - Requests post or page by slug. Slugs are URL-friendly, hyphenated, lowercase strings - e.g., The slug for "My First Post" would be "my-first-post".
+
+
