@@ -34,27 +34,18 @@ $posts = $example->get_posts( $args );
 ###*col_names (associative array)*
 
 - *post_id (int)*
-
 - *title (string)*
-
 - *author_name (string)*
-
 - *date_created (datetime)*
-
 - *date_published (datetime)*
-
 - *post_type (string)*
-
 -- post (default)
-
 -- page
-
 - *slug (string)*
 
 ###*post_type (string)*
 
 - post (default for get_posts)
-
 - page (default for get_page)
 
 ###*paged (int)*
