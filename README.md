@@ -5,6 +5,7 @@
 
 ###*Starky( array $args = [] )*
 - Base class. Accepts an expanded set of the StarkyCMS standard args associative array. See args documentation for list of accepted arguments.
+- NOTE: Currently, passing arguments to the base class does precisely nothing. :)
 
 
 ##CRUD Operations
