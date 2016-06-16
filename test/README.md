@@ -40,15 +40,15 @@ $posts = $example->get_posts( $args );
 - *post_type (string)*
 -- post (default)
 -- page
-- *slug (string)*
-###*post_type (string)*
+- *slug (string)
+###*post_type (string)
 - post (default for get_posts)
 - page (default for get_page)
-###*paged (int)*
+###*paged (int)
 - Equal to 1 less than the page number - e.g., paged will be 9 for page 10.
-###*posts_per_page (int)*
+###*posts_per_page (int)
 - Overrides posts_per_page in s_settings.php.
-###*post_id (int)*
+###*post_id (int)
 - Requests post or page by unique id number.
-###*slug (string)*
+###*slug (string)
 - Requests post or page by slug. Slugs are URL-friendly, hyphenated, lowercase strings - e.g., The slug for "My First Post" would be "my-first-post".
