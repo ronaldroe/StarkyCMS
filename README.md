@@ -28,23 +28,22 @@ $posts = $example->get_posts( $args );
 ##AJAX Operations
 ###*ajax_get_posts( array $args = [] )*
 - Return type: JSON-formatted data
+- Echos: JSON-formatted data
 - Public method available on a Starky instance.
 - May be used the same way as get_posts(). The only difference is return format.
 - Prioritizes inputs for arguments as follows:
 	1. POST
 	2. GET
 	3. $args
-Thus, if $args is passed to the function, but a POST value with the same key exists, the POST value will be used.
+Thus, if $args is passed to the function, but a if POST value with the same key exists, the POST value will be used.
 - Accepts StarkyCMS standard args associative array. See args documentation for list of accepted arguments.
 ```PHP
 $example = new Starky();
 
-$example->ajax_get_posts( $_POST );
+$example->ajax_get_posts();
 ```
 This example will use the contents of PHP's $_POST superglobal as $args input and echo back the posts as a JSON object.
-Note that no arguments are required. All data may be passed as POST or GET requests.
-
-
+Note that no arguments are required. All data may be passed as POST or GET requests. 
 
 ##Starky Standard Arguments
 
