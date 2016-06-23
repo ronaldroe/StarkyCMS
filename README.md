@@ -12,7 +12,7 @@
 ###*get_posts( array $args = [] )*
 - Return type: array
 - Public method available on a Starky instance.
-- Accepts StarkyCMS standard args associative array. See args documentation for list of accepted arguments.
+- Accepts StarkyCMS standard args array. See args documentation for list of accepted arguments.
 ```PHP
 $example = new Starky();
 
@@ -35,15 +35,17 @@ $posts = $example->get_posts( $args );
 	1. POST
 	2. GET
 	3. $args
-Thus, if $args is passed to the function, but a if POST value with the same key exists, the POST value will be used.
-- Accepts StarkyCMS standard args associative array. See args documentation for list of accepted arguments.
+Thus, if $args is passed to the function, but a POST value with the same key exists, the POST value will be used.
+- Accepts StarkyCMS standard args array. See args documentation for list of accepted arguments.
 ```PHP
 $example = new Starky();
 
 $example->ajax_get_posts();
 ```
-This example will use the contents of PHP's $_POST superglobal as $args input and echo back the posts as a JSON object.
+This example will echo back the posts as a JSON object.
 Note that no arguments are required. All data may be passed as POST or GET requests. 
+
+
 
 ##Starky Standard Arguments
 
@@ -51,7 +53,7 @@ Note that no arguments are required. All data may be passed as POST or GET reque
 
 - *post_id (int)*
 - *title (string)*
-- *author_name (string)*
+- *author_id (int)* - Numeric id for an individual author
 - *date_created (datetime)*
 - *date_published (datetime)*
 - *post_type (string)*

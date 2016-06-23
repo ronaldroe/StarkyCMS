@@ -20,7 +20,7 @@ class Starky {
 
 	//****************************** PROPERTIES ******************************//
 
-	private $settings = [];
+	protected $settings = [];
 
 	//****************************** CONSTRUCTOR ******************************//
 
@@ -33,6 +33,9 @@ class Starky {
 
 	//****************************** METHODS ******************************//
 
+	public function get_date(){
+
+	}
 
 	//^^^********************** CRUD **********************^^^//
 
@@ -45,35 +48,43 @@ class Starky {
 
 			$posts = $this->get_posts_mysql_query( $args );
 
+		} 
+		else { 
+
+			die( 'ERROR: Database type is not set or is invalid.' );
+
 		}
 
 		return $posts;
 
 	}
 
-	private function get_posts_mysql_query( array $args = [] ){
+	protected function get_posts_mysql_query( array $args = [] ){
 
 		/// Set current page
 		$args = array_merge( $args, $_GET, $_POST );
+		
+		$settings = $this->get_settings(); //" . $settings['tbl_prefix'] . "
 
+		$sql = "SELECT * FROM " . $settings['tbl_prefix'] . "_posts";
+		$where = $limit = $offset = '';
+
+		// Set default post type if empty
 		if( empty( $args['post_type'] ) ){
 
 			$args['post_type'] = 'post';
 
 		}
 
-		$settings = $this->get_settings();
-
-		/// Build SQL query
-		$sql = "SELECT * FROM " . $settings['tbl_prefix'] . "posts";
+		/// Build WHERE portion of the query
 			
-		$sql .= " WHERE post_type='" . $args['post_type'] . "'";
+		$where = " WHERE post_type='" . $args['post_type'] . "'";
 
 		if( !empty( $args['col_names'] ) ){
 
 			foreach( $args['col_names'] as $key => $value ){
 
-				$sql .= " AND " . $key . "='" . $value . "'";
+				$where .= " AND " . $key . "='" . $value . "'";
 
 			}
 
@@ -81,43 +92,60 @@ class Starky {
 
 		// Find by post_id
 		if( !empty( $args['post_id'] ) ){
-			$sql .= " AND id=" . intval( $args['post_id'] );
+			$where .= " AND id=" . intval( $args['post_id'] );
 		}
 
 		// Find by slug
 		if( !empty( $args['slug'] ) ){
-			$sql .= " AND slug='" . $args['slug'] . "'";
+			$where .= " AND slug='" . $args['slug'] . "'";
 		}
 
-		// Set max posts per page
+		/// Set LIMIT (max posts per page)
 		if( !empty( $args['posts_per_page'] ) && intval( $args['posts_per_page'] ) > 0 ){
 
-			$sql .= " LIMIT " . intval( $args['posts_per_page'] );
+			$limit = " LIMIT " . intval( $args['posts_per_page'] );
 
 		} elseif ( empty( $args['posts_per_page'] ) && intval( $settings['posts_per_page'] ) > 0 ){
 
-			$sql .= " LIMIT " . intval( $settings['posts_per_page'] );
+			$limit = " LIMIT " . intval( $settings['posts_per_page'] );
 
 		}
 
-		// Set offset for paging
+		/// Set OFFSET (for paging)
 		if( isset( $args['paged'] ) ){
 
 			$paged = $args['paged'] * $settings['posts_per_page'];
-			$sql .= " OFFSET " . $paged;
+			$offset = " OFFSET " . $paged;
 
 		}
+
+		/// Build
+		$sql = $sql . $where . $limit . $offset;
 
 		/// Connect and run query
 		$con = $this->connect_db( $settings );
 		$posts = $con->query( $sql );
 		$posts = mysqli_fetch_all( $posts, MYSQLI_ASSOC );
 
+		for ( $i = 0; $i < count( $posts ); $i++ ) {
+
+			$author_sql = "SELECT id, user_first_name, user_last_name, user_url, user_email FROM " . $settings['tbl_prefix'] . "_users WHERE id=" . $posts[$i]['author_id'];
+
+			$author = $con->query( $author_sql );
+
+			$author = mysqli_fetch_array( $author, MYSQLI_ASSOC );
+
+			$posts[$i]['author'] = $author;
+
+			unset( $posts[$i]['author_id'] );
+
+		}
+
 		return $posts;
 
 	}
 
-	private function connect_db( array $settings ) {
+	protected function connect_db( array $settings ) {
 
 		if( $settings['db_type'] == 'mysql' ) {
 
@@ -179,16 +207,12 @@ class Starky {
 
 	}
 
-	private function get_settings() {
+	protected function get_settings() {
 
 		include( 's_settings.php' );
 		return $_SETTINGS;
 
 	}
-
-	//^^^********************** SETTERS **********************^^^//
-
-
 
 	//^^^^^^^^^^^^^^^^^^ AJAX GETTERS ^^^^^^^^^^^^^^^^^^//
 
@@ -211,6 +235,10 @@ class Starky {
 		echo json_encode( $ajax );
 
 	}
+
+	//^^^********************** SETTERS **********************^^^//
+
+
 
 	//^^^^^^^^^^^^^^^^^^ AJAX SETTERS ^^^^^^^^^^^^^^^^^^//
 

@@ -13,7 +13,7 @@ $_SETTINGS['db_name'] = 'starky';
 
 $_SETTINGS['db_type'] = 'mysql'; // Currently supports 'mysql'
 
-$_SETTINGS['tbl_prefix'] = 'stk_';
+$_SETTINGS['tbl_prefix'] = 'stk';
 
 //**** Content settings ****//
 $_SETTINGS['posts_per_page'] = 10;
