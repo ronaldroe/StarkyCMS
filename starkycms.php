@@ -44,14 +44,14 @@ class Starky {
 		$settings = $this->get_settings();
 		$posts = [];
 
-		if($settings['db_type'] == 'mysql'){
+		if( $settings['db_type'] == 'mysql' ){
 
 			$posts = $this->get_posts_mysql_query( $args );
 
 		} 
 		else { 
 
-			die( 'ERROR: Database type is not set or is invalid.' );
+			die( 'ERROR: Database type is not set or is invalid/unsupported.' );
 
 		}
 
@@ -64,7 +64,7 @@ class Starky {
 		/// Set current page
 		$args = array_merge( $args, $_GET, $_POST );
 		
-		$settings = $this->get_settings(); //" . $settings['tbl_prefix'] . "
+		$settings = $this->get_settings();
 
 		$sql = "SELECT * FROM " . $settings['tbl_prefix'] . "_posts";
 		$where = $limit = $offset = '';
@@ -90,13 +90,11 @@ class Starky {
 
 		}
 
-		// Find by post_id
-		if( !empty( $args['post_id'] ) ){
+		// Find by post_id - prioritizes post_id
+		if( !empty( $args['post_id'] ) || ( !empty( $args['slug'] ) && !empty( $args['post_id'] ) ) ){
 			$where .= " AND id=" . intval( $args['post_id'] );
-		}
-
-		// Find by slug
-		if( !empty( $args['slug'] ) ){
+		} // Find by slug
+		elseif( !empty( $args['slug'] ) && empty( $args['post_id'] ) ){
 			$where .= " AND slug='" . $args['slug'] . "'";
 		}
 
@@ -127,9 +125,12 @@ class Starky {
 		$posts = $con->query( $sql );
 		$posts = mysqli_fetch_all( $posts, MYSQLI_ASSOC );
 
+
+		/// Add author info to each post
 		for ( $i = 0; $i < count( $posts ); $i++ ) {
 
-			$author_sql = "SELECT id, user_first_name, user_last_name, user_url, user_email FROM " . $settings['tbl_prefix'] . "_users WHERE id=" . $posts[$i]['author_id'];
+			$author_sql = "SELECT user_first_name, user_last_name, user_url, user_email FROM " . $settings['tbl_prefix'] // Line break for readability
+			. "_users WHERE id=" . $posts[$i]['author_id'];
 
 			$author = $con->query( $author_sql );
 
@@ -141,6 +142,7 @@ class Starky {
 
 		}
 
+		// Return
 		return $posts;
 
 	}
@@ -149,7 +151,9 @@ class Starky {
 
 		if( $settings['db_type'] == 'mysql' ) {
 
-			$con = new mysqli( $settings['host_name'], $settings['username'], $settings['password'], $settings['db_name'] ) or die( "Could not connect: " . $mysqli->connect_error );
+			$con = new mysqli( $settings['host_name'], $settings['username'], $settings['password'], $settings['db_name'] ) 
+
+			or die( "Could not connect: " . $mysqli->connect_error );
 
 		} elseif ( $settings['db_type'] == 'mongodb' ) {
 
@@ -163,24 +167,66 @@ class Starky {
 
 	public function get_page( array $args = [] ) {
 
-		$args['post_type'] = 'page';
+		$settings = $this->get_settings();
+		$posts = [];
 
-		if( empty( $args['post_id'] ) ){
+		if( $settings['db_type'] == 'mysql' ){
 
-			$args['post_id'] = $_GET['page'] || $_GET['post_id'];
+			$posts = $this->get_page_mysql_query( $args );
+
+		} 
+		else { 
+
+			die( 'ERROR: Database type is not set or is invalid/unsupported.' );
 
 		}
 
+		return $posts;
+
+	}
+
+	protected function get_page_mysql_query( array $args = [] ){
+
+		$args = array_merge( $args, $_GET, $_POST );
+		$args['post_type'] = 'page';
+
 		$settings = $this->get_settings();
 
-		$sql = "SELECT * FROM " . $settings['tbl_prefix'] . "posts WHERE post_type='" . $args['post_type'] . "'";
+		$sql = "SELECT * FROM " . $settings['tbl_prefix'] . "_posts";
+		$where = '';
 
+		$where .= " WHERE post_type='" . $args['post_type'] . "'";
 
+		// Find by post_id - prioritizes post_id
+		if( !empty( $args['post_id'] ) || ( !empty( $args['slug'] ) && !empty( $args['post_id'] ) ) ){
+			$where .= " AND id=" . intval( $args['post_id'] );
+		} // Find by slug
+		elseif( !empty( $args['slug'] ) && empty( $args['post_id'] ) ){
+			$where .= " AND slug='" . $args['slug'] . "'";
+		}
+
+		/// Build query
+		$sql .= $where;
 
 		$con = $this->connect_db( $settings );
 		$page = $con->query( $sql );
-		$page = mysqli_fetch_all( $page, MYSQLI_ASSOC );
+		$page = mysqli_fetch_array( $page, MYSQLI_ASSOC );
 
+
+		// Add author info
+		$author_sql = "SELECT user_first_name, user_last_name, user_url, user_email FROM " . $settings['tbl_prefix'] // Line break for readability
+		. "_users WHERE id=" . $page['author_id'];
+
+		$author = $con->query( $author_sql );
+
+		$author = mysqli_fetch_array( $author, MYSQLI_ASSOC );
+
+		$page['author'] = $author;
+
+		unset( $page['author_id'] );
+
+
+		// Return
 		return $page;
 
 	}

@@ -64,7 +64,7 @@ Note that no arguments are required. All data may be passed as POST or GET reque
 ###*post_type (string)*
 
 - post (default for get_posts)
-- page (default for get_page)
+- page (overwritten in get_page)
 
 ###*paged (int)*
 
