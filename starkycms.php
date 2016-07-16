@@ -33,10 +33,6 @@ class Starky {
 
 	//****************************** METHODS ******************************//
 
-	public function get_date(){
-
-	}
-
 	//^^^********************** CRUD **********************^^^//
 
 	public function get_posts( array $args = [] ) {
@@ -46,7 +42,7 @@ class Starky {
 
 		if( $settings['db_type'] == 'mysql' ){
 
-			$posts = $this->get_posts_mysql_query( $args );
+			$posts = $this->mysql_get_posts( $args );
 
 		} 
 		else { 
@@ -59,7 +55,27 @@ class Starky {
 
 	}
 
-	protected function get_posts_mysql_query( array $args = [] ){
+	public function get_page( array $args = [] ) {
+
+		$settings = $this->get_settings();
+		$posts = [];
+
+		if( $settings['db_type'] == 'mysql' ){
+
+			$posts = $this->mysql_get_page( $args );
+
+		} 
+		else { 
+
+			die( 'ERROR: Database type is not set or is invalid/unsupported.' );
+
+		}
+
+		return $posts;
+
+	}
+
+	protected function mysql_get_posts( array $args = [] ){
 
 		/// Set current page
 		$args = array_merge( $args, $_GET, $_POST );
@@ -92,10 +108,15 @@ class Starky {
 
 		// Find by post_id - prioritizes post_id
 		if( !empty( $args['post_id'] ) || ( !empty( $args['slug'] ) && !empty( $args['post_id'] ) ) ){
+
 			$where .= " AND id=" . intval( $args['post_id'] );
+
 		} // Find by slug
+
 		elseif( !empty( $args['slug'] ) && empty( $args['post_id'] ) ){
+
 			$where .= " AND slug='" . $args['slug'] . "'";
+
 		}
 
 		/// Set LIMIT (max posts per page)
@@ -142,42 +163,10 @@ class Starky {
 
 		}
 
-		// Return
-		return $posts;
-
-	}
-
-	protected function connect_db( array $settings ) {
-
-		if( $settings['db_type'] == 'mysql' ) {
-
-			$con = new mysqli( $settings['host_name'], $settings['username'], $settings['password'], $settings['db_name'] ) 
-
-			or die( "Could not connect: " . $mysqli->connect_error );
-
-		} elseif ( $settings['db_type'] == 'mongodb' ) {
-
-			// SOME CODE FOR MONGODB
-
-		}
-
-		return $con;
-
-	}
-
-	public function get_page( array $args = [] ) {
-
-		$settings = $this->get_settings();
-		$posts = [];
-
-		if( $settings['db_type'] == 'mysql' ){
-
-			$posts = $this->get_page_mysql_query( $args );
-
-		} 
-		else { 
-
-			die( 'ERROR: Database type is not set or is invalid/unsupported.' );
+		if ( $con->error ) {
+			
+			echo( $con->error );
+			return;
 
 		}
 
@@ -185,7 +174,7 @@ class Starky {
 
 	}
 
-	protected function get_page_mysql_query( array $args = [] ){
+	protected function mysql_get_page( array $args = [] ){
 
 		$args = array_merge( $args, $_GET, $_POST );
 		$args['post_type'] = 'page';
@@ -199,10 +188,24 @@ class Starky {
 
 		// Find by post_id - prioritizes post_id
 		if( !empty( $args['post_id'] ) || ( !empty( $args['slug'] ) && !empty( $args['post_id'] ) ) ){
+
 			$where .= " AND id=" . intval( $args['post_id'] );
+
 		} // Find by slug
 		elseif( !empty( $args['slug'] ) && empty( $args['post_id'] ) ){
+
 			$where .= " AND slug='" . $args['slug'] . "'";
+
+		}
+
+		if( !empty( $args['col_names'] ) ){
+
+			foreach( $args['col_names'] as $key => $value ){
+
+				$where .= " AND " . $key . "='" . $value . "'";
+
+			}
+
 		}
 
 		/// Build query
@@ -210,37 +213,159 @@ class Starky {
 
 		$con = $this->connect_db( $settings );
 		$page = $con->query( $sql );
+
+		if ( $con->error ) {
+			
+			echo( $con->error );
+			return;
+
+		}
+
 		$page = mysqli_fetch_array( $page, MYSQLI_ASSOC );
 
 
 		// Add author info
-		$author_sql = "SELECT user_first_name, user_last_name, user_url, user_email FROM " . $settings['tbl_prefix'] // Line break for readability
-		. "_users WHERE id=" . $page['author_id'];
-
-		$author = $con->query( $author_sql );
-
-		$author = mysqli_fetch_array( $author, MYSQLI_ASSOC );
-
-		$page['author'] = $author;
+		$page['author'] = $this->get_author( $con, $page['author_id'] );
 
 		unset( $page['author_id'] );
 
+		$con->close();
 
-		// Return
 		return $page;
 
 	}
 
-	public function new_post( array $input ) {
+	protected function connect_db( array $settings = [] ) {
+
+		if( $settings['db_type'] == 'mysql' ) {
+
+			$con = new mysqli( $settings['host_name'], $settings['username'], $settings['password'], $settings['db_name'] ) 
+
+			or die( "Could not connect: " . $mysqli->connect_error );
+
+		}
+
+		return $con;
+
+	}
+
+	public function new_post( array $input = [] ) {
+
+		if( !$input ){
+
+			echo( 'Input required' );
+
+		}
+		else{
+
+			$settings = $this->get_settings();
+
+			if( $settings['db_type'] == 'mysql' ){
+
+				$output = $this->mysql_new_post( $input );
+
+				return $output;
+
+			}
+			else { 
+
+				die( 'ERROR: Database type is not set or is invalid/unsupported.' );
+
+			}
+
+		}
+
+	}
+
+	protected function mysql_new_post( array $input ){
+
+		$input = array_merge( $input, $_GET, $_POST );
+		
+		$settings = $this->get_settings();
+
+		$con = $this->connect_db( $settings );
+
+		$post_meta = [];
+
+		$columns = [];
+		$data = [];
+
+		{
+
+			/// Get column names from posts table.
+			/// We're going to use this to check for extra (post_meta) columns.
+
+			$cols = $con->query( "SHOW COLUMNS FROM " . $settings['tbl_prefix'] . "_posts" );
+			$cols = mysqli_fetch_all( $cols, MYSQLI_ASSOC );
+
+			$col_names = [];
+
+			foreach ( $cols as $col ) {
+				
+				array_push( $col_names, $col['Field']);
+
+			}
+
+		}
+
+		/// Build post meta, column data
+		foreach ($input as $key => $value) {
+			
+			if( !in_array( $key, $col_names )){
+
+				array_push( $post_meta, [$key => $value] );
+
+			}
+			else{
+
+				array_push( $columns, $key );
+				array_push( $data, $value );
+
+			}
+
+		}
+
+		$post_meta_json = json_encode( $post_meta );
+
+		/// Build out SQL
+		$sql = "INSERT INTO " . $settings['tbl_prefix'] . "_posts (post_meta";
+
+		foreach( $columns as $column ){
+
+			$sql .= ", " . $column;
+
+		}
+
+		$sql .= ") VALUES(" . $post_meta_json;
+
+		foreach( $data as $item ){
+
+			$sql .= ", " . $item;
+
+		}
+
+		$sql .= ")";
+
+		$info_out = $con->query( $sql );
+
+		if ( $con->error ) {
+			
+			return $con->error;
+
+		}
+
+		return $info_out;
 
 	}
 
 	public function update_post( array $input ) {
-
+		// Will need to return any MySQL errors
+		// Add an update_post_mysql_query function
 	}
 
 	public function delete_post( array $input ) {
-
+		// Will need to return any MySQL errors
+		// Add a delete_post_mysql_query function
 	}
 
 	//^^^********************** GETTERS **********************^^^//
@@ -253,10 +378,51 @@ class Starky {
 
 	}
 
+	public function get_date(){
+
+		$date = [];
+
+	}
+
 	protected function get_settings() {
 
 		include( 's_settings.php' );
+
 		return $_SETTINGS;
+
+	}
+
+	protected function mysql_get_author( $con, int $id ){
+
+		$settings = $this->get_settings();
+
+		$author_sql = "SELECT user_first_name, user_last_name, user_url, user_email FROM " . $settings['tbl_prefix'] // Line break for readability
+		. "_users WHERE id=" . intval( $id );
+
+		$author = $con->query( $author_sql );
+
+		$author = mysqli_fetch_array( $author, MYSQLI_ASSOC );
+
+		return $author;
+
+	}
+
+	public function get_author( $con, int $id ){
+
+		$settings = $this->get_settings();
+		$author = [];
+
+		if( $settings['db_type'] == 'mysql' ){
+
+			$author = $this->mysql_get_author( $con, $id );
+
+		} else {
+
+			die ( 'ERROR: Database type is not set or is invalid/unsupported.' );
+
+		}
+
+		return $author;
 
 	}
 

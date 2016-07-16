@@ -10,14 +10,16 @@ $output = new Starky;
 
 <?php
 
-$page = $output->get_page();
-
-foreach ($page as $content): ?>
+$content = $output->get_page(['post_id' => 2]); ?>
 
 <h1><?php echo $content['title']; ?></h1>
 
 <p><?php echo $content['content']; ?></p>
 
-<?php endforeach; ?>
+<h1>RAW OUTPUT</h1>
+
+<pre>
+	<?php print_r( $content ); ?>
+</pre>
 
 </body></html>

@@ -18,10 +18,26 @@
 		$r_posts = new Starky;
 
 		$r_post = $r_posts->get_posts([
-			'slug' => $server[3]
+			'slug' => $slug
 		]);
 
 		print_r( $r_post );
+
+	} elseif ( $type == 'page' && is_string( $slug ) ) {
+		
+		include( '../starkycms.php' );
+
+		$r_posts = new Starky;
+
+		$r_post = $r_posts->get_page([
+			'slug' => $slug
+		]);
+
+		print_r( $r_post );
+
+	} else {
+
+		
 
 	}
 
