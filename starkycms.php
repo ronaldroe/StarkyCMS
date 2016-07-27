@@ -24,16 +24,41 @@ class Starky {
 
 	//****************************** CONSTRUCTOR ******************************//
 
-	function __construct( array $args = [] ) {
+	function __construct( string $init_type = '', array $args = [] ) {
 
 		// Attach settings
 		$settings = $this->get_settings();
+
+		if( !$init_type || $init_type = 'connect' ){
+			
+			return $this->connect_db( $settings );
+			
+		}
+		elseif ( $init_type == 'none'  ) {
+			
+			return;
+
+		}
 
 	}
 
 	//****************************** METHODS ******************************//
 
-	//^^^********************** CRUD **********************^^^//
+	protected function connect_db( array $settings = [] ) {
+
+		if( $settings['db_type'] == 'mysql' ) {
+
+			$con = new mysqli( $settings['host_name'], $settings['username'], $settings['password'], $settings['db_name'] ) 
+
+			or die( "Could not connect: " . $mysqli->connect_error );
+
+		}
+
+		return $con;
+
+	}
+
+	//^^^********************** GETTERS **********************^^^//
 
 	public function get_posts( array $args = [] ) {
 
@@ -235,141 +260,6 @@ class Starky {
 
 	}
 
-	protected function connect_db( array $settings = [] ) {
-
-		if( $settings['db_type'] == 'mysql' ) {
-
-			$con = new mysqli( $settings['host_name'], $settings['username'], $settings['password'], $settings['db_name'] ) 
-
-			or die( "Could not connect: " . $mysqli->connect_error );
-
-		}
-
-		return $con;
-
-	}
-
-	public function new_post( array $input = [] ) {
-
-		if( !$input ){
-
-			echo( 'Input required' );
-
-		}
-		else{
-
-			$settings = $this->get_settings();
-
-			if( $settings['db_type'] == 'mysql' ){
-
-				$output = $this->mysql_new_post( $input );
-
-				return $output;
-
-			}
-			else { 
-
-				die( 'ERROR: Database type is not set or is invalid/unsupported.' );
-
-			}
-
-		}
-
-	}
-
-	protected function mysql_new_post( array $input ){
-
-		$input = array_merge( $input, $_GET, $_POST );
-		
-		$settings = $this->get_settings();
-
-		$con = $this->connect_db( $settings );
-
-		$post_meta = [];
-
-		$columns = [];
-		$data = [];
-
-		{
-
-			/// Get column names from posts table.
-			/// We're going to use this to check for extra (post_meta) columns.
-
-			$cols = $con->query( "SHOW COLUMNS FROM " . $settings['tbl_prefix'] . "_posts" );
-			$cols = mysqli_fetch_all( $cols, MYSQLI_ASSOC );
-
-			$col_names = [];
-
-			foreach ( $cols as $col ) {
-				
-				array_push( $col_names, $col['Field']);
-
-			}
-
-		}
-
-		/// Build post meta, column data
-		foreach ($input as $key => $value) {
-			
-			if( !in_array( $key, $col_names )){
-
-				array_push( $post_meta, [$key => $value] );
-
-			}
-			else{
-
-				array_push( $columns, $key );
-				array_push( $data, $value );
-
-			}
-
-		}
-
-		$post_meta_json = json_encode( $post_meta );
-
-		/// Build out SQL
-		$sql = "INSERT INTO " . $settings['tbl_prefix'] . "_posts (post_meta";
-
-		foreach( $columns as $column ){
-
-			$sql .= ", " . $column;
-
-		}
-
-		$sql .= ") VALUES(" . $post_meta_json;
-
-		foreach( $data as $item ){
-
-			$sql .= ", " . $item;
-
-		}
-
-		$sql .= ")";
-
-		$info_out = $con->query( $sql );
-
-		if ( $con->error ) {
-			
-			return $con->error;
-
-		}
-
-		return $info_out;
-
-	}
-
-	public function update_post( array $input ) {
-		// Will need to return any MySQL errors
-		// Add an update_post_mysql_query function
-	}
-
-	public function delete_post( array $input ) {
-		// Will need to return any MySQL errors
-		// Add a delete_post_mysql_query function
-	}
-
-	//^^^********************** GETTERS **********************^^^//
-
 	public function starky_title(){
 
 		$settings = $this->get_settings();
@@ -451,6 +341,134 @@ class Starky {
 	//^^^********************** SETTERS **********************^^^//
 
 
+	public function new_post( array $input = [] ) {
+
+		if( !$input ){
+
+			echo( 'Input required' );
+
+		}
+		else{
+
+			$settings = $this->get_settings();
+
+			if( $settings['db_type'] == 'mysql' ){
+
+				$output = $this->mysql_new_post( $input );
+
+				return $output;
+
+			}
+			else { 
+
+				die( 'ERROR: Database type is not set or is invalid/unsupported.' );
+
+			}
+
+		}
+
+	}
+
+	protected function mysql_new_post( array $input ){
+
+		$input = array_merge( $input, $_GET, $_POST );
+		
+		$settings = $this->get_settings();
+
+		$con = $this->connect_db( $settings );
+
+		$post_meta = [];
+
+		$columns = [];
+		$data = [];
+
+		{
+
+			/// Get column names from posts table.
+			/// We're going to use this to check for extra (post_meta) columns.
+
+			$cols = $con->query( "SHOW COLUMNS FROM " . $settings['tbl_prefix'] . "_posts" );
+			$cols = mysqli_fetch_all( $cols, MYSQLI_ASSOC );
+
+			$col_names = [];
+
+			foreach ( $cols as $col ) {
+				
+				array_push( $col_names, $col['Field']);
+
+			}
+
+		}
+
+		/// Build post meta, column data
+		foreach ($input as $key => $value) {
+			
+			if( !in_array( $key, $col_names )){
+
+				array_push( $post_meta, [$key => $value] );
+
+			}
+			else{
+
+				array_push( $columns, $key );
+				array_push( $data, $value );
+
+			}
+
+		}
+
+		// Create slug
+		array_push( $columns, 'slug' );
+
+		array_push( $data, $this->get_slug( $input['title'] ) );
+
+		// Post meta as JSON
+		$post_meta_json = json_encode( $post_meta );
+
+		/// Build out SQL
+		$sql = "INSERT INTO " . $settings['tbl_prefix'] . "_posts (post_meta";
+
+		foreach( $columns as $column ){
+
+			$sql .= ", " . $column;
+
+		}
+
+		$sql .= ") VALUES('" . $post_meta_json . "'";
+
+		foreach( $data as $item ){
+
+			$sql .= ", '" . $item . "'";
+
+		}
+
+		$sql .= ")";
+
+		$info_out = $con->query( $sql );
+		print_r($sql);
+
+		if ( $con->error ) {
+			
+			return $con->error;
+
+		}
+
+		return $info_out;
+
+	}
+
+	public function update_post( array $input ) {
+		// Will need to return any MySQL errors
+		// Add an update_post_mysql_query function
+
+	}
+
+	public function delete_post( array $input ) {
+		// Will need to return any MySQL errors
+		// Add a delete_post_mysql_query function
+
+	}
+
 
 	//^^^^^^^^^^^^^^^^^^ AJAX SETTERS ^^^^^^^^^^^^^^^^^^//
 
@@ -459,6 +477,28 @@ class Starky {
 	}
 
 	public function ajax_delete_post( array $args = [] ){
+
+	}
+
+	public function ajax_new_post( array $input ){
+
+		$input = array_merge( $input, $_GET, $_POST );
+
+		$ajax = $this->new_post( $input );
+
+		return json_encode( $ajax );
+
+	}
+
+	//^^^********************** MISC **********************^^^//
+
+	protected function get_slug( $string ) {
+
+	    $string = preg_replace( "/[^a-z0-9 ]/i", "", $string );
+
+	    $string = str_replace( ' ', '-', $string );
+
+	    return strtolower( $string );
 
 	}
 

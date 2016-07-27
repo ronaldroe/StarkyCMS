@@ -3,15 +3,22 @@
 
 # Documentation
 
-###*Starky( array $args = [] )*
-- Base class. Accepts an expanded set of the StarkyCMS standard args associative array. See args documentation for list of accepted arguments.
+###*Starky( string $init_type = '', array $args = [] )*
+
+- Base class. Second argument accepts an expanded set of the StarkyCMS standard args associative array. See args documentation for list of accepted arguments.
+- *$init_type* determines what is returned and accepts the following arguments:
+	- empty string - returns connection object
+	- *connect* - same as empty string
+	- *none* - returns Starky object
 - NOTE: Currently, passing arguments to the base class does precisely nothing. :)
 
 
 ##CRUD Operations
+
 ###*get_posts( array $args = [] )*
+
 - Return type: array
-- Public method available on a Starky instance.
+- Public method available on a Starky instance
 - Accepts StarkyCMS standard args array. See args documentation for list of accepted arguments.
 ```PHP
 $example = new Starky();
@@ -26,7 +33,9 @@ $posts = $example->get_posts( $args );
 
 
 ##AJAX Operations
+
 ###*ajax_get_posts( array $args = [] )*
+
 - Return type: JSON-formatted data
 - Echos: JSON-formatted data
 - Public method available on a Starky instance.
@@ -45,6 +54,24 @@ $example->ajax_get_posts();
 This example will echo back the posts as a JSON object.
 Note that no arguments are required. All data may be passed as POST or GET requests. 
 
+
+##Getters
+
+###*get_author( object $con, int $author_id )*
+
+- Return type: array
+- Public method available on a Starky instance.
+- Description: Retrieves author details.
+- Requires 2 arguments
+	1. *object $con* - mysqli connect object
+	2. *int $author_id* - int value of the author's id
+```PHP
+$con = new mysqli( $host, $user, $pass, $db );
+
+$s = new Starky;
+
+// Retrieves the first author
+$author = $s->get_author( $con, 1 );
 
 
 ##Starky Standard Arguments
@@ -81,5 +108,3 @@ Note that no arguments are required. All data may be passed as POST or GET reque
 ###*slug (string)*
 
 - Requests post or page by slug. Slugs are URL-friendly, hyphenated, lowercase strings - e.g., The slug for "My First Post" would be "my-first-post".
-
-

@@ -2,8 +2,9 @@
 
 include_once('starkycms.php');
 
-$output = new Starky;
+$output = new Starky( 'none' );
 
+print_r($output);
 ?>
 
 <!DOCTYPE html><html><head><title><?php echo $output->starky_title(); ?></title></head><body>
