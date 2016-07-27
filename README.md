@@ -44,7 +44,7 @@ $posts = $example->get_posts( $args );
 	1. POST
 	2. GET
 	3. $args
-Thus, if $args is passed to the function, but a POST value with the same key exists, the POST value will be used.
+- Thus, if $args is passed to the function, but a POST value with the same key exists, the POST value will be used.
 - Accepts StarkyCMS standard args array. See args documentation for list of accepted arguments.
 ```PHP
 $example = new Starky();
@@ -72,6 +72,7 @@ $s = new Starky;
 
 // Retrieves the first author
 $author = $s->get_author( $con, 1 );
+```
 
 
 ##Starky Standard Arguments
