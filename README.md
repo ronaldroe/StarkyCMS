@@ -7,8 +7,8 @@
 
 - Base class. Second argument accepts an expanded set of the StarkyCMS standard args associative array. See args documentation for list of accepted arguments.
 - *$init_type* determines what is returned and accepts the following arguments:
-	- empty string - returns connection object
-	- *connect* - same as empty string
+	- *connect* - returns connection object
+	- empty string - same as *connect*
 	- *none* - returns Starky object
 - NOTE: Currently, passing arguments to the base class does precisely nothing. :)
 
@@ -57,23 +57,7 @@ Note that no arguments are required. All data may be passed as POST or GET reque
 
 ##Getters
 
-###*get_author( object $con, int $author_id )*
-
-- Return type: array
-- Public method available on a Starky instance.
-- Description: Retrieves author details.
-- Requires 2 arguments
-	1. *object $con* - mysqli connect object
-	2. *int $author_id* - int value of the author's id
-```PHP
-$con = new mysqli( $host, $user, $pass, $db );
-
-$s = new Starky;
-
-// Retrieves the first author
-$author = $s->get_author( $con, 1 );
-```
-
+Nothing here just yet
 
 ##Starky Standard Arguments
 

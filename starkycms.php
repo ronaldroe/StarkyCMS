@@ -175,12 +175,7 @@ class Starky {
 		/// Add author info to each post
 		for ( $i = 0; $i < count( $posts ); $i++ ) {
 
-			$author_sql = "SELECT user_first_name, user_last_name, user_url, user_email FROM " . $settings['tbl_prefix'] // Line break for readability
-			. "_users WHERE id=" . $posts[$i]['author_id'];
-
-			$author = $con->query( $author_sql );
-
-			$author = mysqli_fetch_array( $author, MYSQLI_ASSOC );
+			$author = $this->mysql_get_author( $con, $posts[$i]['author_id']);
 
 			$posts[$i]['author'] = $author;
 
@@ -250,7 +245,7 @@ class Starky {
 
 
 		// Add author info
-		$page['author'] = $this->get_author( $con, $page['author_id'] );
+		$page['author'] = $this->mysql_get_author( $con, $page['author_id'] );
 
 		unset( $page['author_id'] );
 
@@ -292,25 +287,6 @@ class Starky {
 		$author = $con->query( $author_sql );
 
 		$author = mysqli_fetch_array( $author, MYSQLI_ASSOC );
-
-		return $author;
-
-	}
-
-	public function get_author( $con, int $id ){
-
-		$settings = $this->get_settings();
-		$author = [];
-
-		if( $settings['db_type'] == 'mysql' ){
-
-			$author = $this->mysql_get_author( $con, $id );
-
-		} else {
-
-			die ( 'ERROR: Database type is not set or is invalid/unsupported.' );
-
-		}
 
 		return $author;
 
