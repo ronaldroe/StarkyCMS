@@ -57,7 +57,10 @@ Note that no arguments are required. All data may be passed as POST or GET reque
 
 ##Getters
 
-Nothing here just yet
+###*starky_title()*
+- Return type: String
+- Public method available on Starky instance
+- Returns title from s_settings.php
 
 ##Starky Standard Arguments
 
