@@ -151,12 +151,16 @@ class Starky {
 		$posts = mysqli_fetch_all( $posts, MYSQLI_ASSOC );
 
 
-		/// Add author info to each post
+		/// Add author info to each post and decode post_meta
 		for ( $i = 0; $i < count( $posts ); $i++ ){
 
 			$author = $this->mysql_get_author( $con, $posts[$i]['author_id']);
 
 			$posts[$i]['author'] = $author;
+			
+			$post_meta_temp = json_decode( $posts[$i]['post_meta'] );
+			
+			$posts[$i]['post_meta'] = $post_meta_temp;
 
 			unset( $posts[$i]['author_id'] );
 
@@ -244,9 +248,15 @@ class Starky {
 
 
 		// Add author info
-		$page['author'] = $this->mysql_get_author( $con, $page['author_id'] );
+		{
+			$page['author'] = $this->mysql_get_author( $con, $page['author_id'] );
 
-		unset( $page['author_id'] );
+			unset( $page['author_id'] );
+			
+			$post_meta_temp = json_decode( $posts[$i]['post_meta'] );
+			
+			$posts[$i]['post_meta'] = $post_meta_temp;
+		}
 
 		$con->close();
 
