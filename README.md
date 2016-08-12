@@ -1,6 +1,8 @@
 # Starky CMS
 ### A PHP Headless Content Management System by Ronald Roe
 
+#### Note: This is not ready for primetime. While entirely usable, no security measures have been implemented and the documentation is not nearly complete.
+
 # Documentation
 
 ###*Starky( string $init_type = '', array $args = [] )*

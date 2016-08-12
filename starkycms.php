@@ -20,7 +20,9 @@ class Starky {
 
 	//****************************** PROPERTIES ******************************//
 
-	protected $settings = [];
+	public $con;
+
+	private $settings;
 
 	//****************************** CONSTRUCTOR ******************************//
 
@@ -29,9 +31,24 @@ class Starky {
 		// Attach settings
 		$settings = $this->get_settings();
 
-		if( empty( $init_type ) || $init_type = 'connect' || $init_type == '' ){
+		$this->settings = $settings;
+
+		unset( $this->settings['host_name'], $this->settings['password'], $this->settings['username'], $this->settings['db_name'] );
+
+		if( empty( $init_type ) || $init_type = 'connect' || $init_type == '' || $init_type = null ){
+
+			if( $this->settings['db_type'] == 'mysql' ){
+
+				$this->con = $this->connect_db( $settings );
+
+			}
+			else{
+
+				die( 'ERROR: Database type is not set or is invalid/unsupported.' );
+
+			}
 			
-			return $this->connect_db( $settings );
+			return $this->con;
 			
 		}
 		elseif ( $init_type == 'none'  ){
@@ -253,9 +270,9 @@ class Starky {
 
 			unset( $page['author_id'] );
 			
-			$post_meta_temp = json_decode( $posts[$i]['post_meta'] );
+			$post_meta_temp = json_decode( $page['post_meta'] );
 			
-			$posts[$i]['post_meta'] = $post_meta_temp;
+			$page['post_meta'] = $post_meta_temp;
 		}
 
 		$con->close();
@@ -272,9 +289,20 @@ class Starky {
 
 	}
 
-	public function get_date(){
+	public function get_datetime( $timezone = null ){
 
-		$date = [];
+		$settings = $this->get_settings();
+
+		$output = [];
+
+		if( $timezone == null )
+			$timezone = $settings['time_zone'];
+
+		$datetime = new DateTime();
+
+		$datetime->setTimezone( new DateTimeZone( $timezone ) );
+
+		return $datetime->format( 'Y-m-d H:i:s' );
 
 	}
 
@@ -361,6 +389,12 @@ class Starky {
 		}
 		else{
 
+			$input['title'] = mysql_real_escape_string( $input['title'] );
+
+			$input['content'] = mysql_real_escape_string( $input['content'] );
+
+			$input['excerpt'] = mysql_real_escape_string( $input['excerpt'] );
+
 			$settings = $this->get_settings();
 
 			if( $settings['db_type'] == 'mysql' ){
@@ -399,10 +433,21 @@ class Starky {
 			
 		}
 
-		{
+		if( !isset( $input['date_created'] ) ){
+
+			$input['date_created'] = $this->get_datetime();
+
+		}
+
+		if( !isset( $input['link'] ) ){
+
+			$input['link'] = '/' . $this->get_slug( $input['title'] );
+
+		}
 
 			/// Get column names from posts table.
 			/// We're going to use this to check for extra (post_meta) columns.
+		{
 
 			$cols = $con->query( "SHOW COLUMNS FROM " . $settings['tbl_prefix'] . "_posts" );
 			$cols = mysqli_fetch_all( $cols, MYSQLI_ASSOC );
@@ -474,8 +519,6 @@ class Starky {
 	}
 
 	public function update_post( array $input ){
-		
-		$settings = $this->get_settings();
 
 		if( !$input ){
 
@@ -483,6 +526,26 @@ class Starky {
 
 		}
 		else{
+
+			if( isset( $input['title'] ) ){
+
+				$input['title'] = mysql_real_escape_string( $input['title'] );
+
+			}
+
+			if( isset( $input['content'] ) ){
+
+				$input['content'] = mysql_real_escape_string( $input['content'] );
+
+			}
+
+			if( isset( $input['excerpt'] ) ){
+
+				$input['excerpt'] = mysql_real_escape_string( $input['excerpt'] );
+
+			}
+		
+			$settings = $this->get_settings();
 
 			if( $settings['db_type'] == 'mysql' ){
 
@@ -622,8 +685,6 @@ class Starky {
 
 		return $info_out;
 		
-		
-
 	}
 
 	public function delete_post( array $input ){
@@ -684,19 +745,39 @@ class Starky {
 
 	public function upsert_post( array $input ){
 
-		// Check if receiving id or post_id
-		// If receiving, update, otherwise insert
+		if( !isset( $input['id'] ) || !isset( $input['post_id'] ) ){
+
+			$this->update_post( $input );
+
+		}
+		else{
+
+			$this->new_post( $input );
+
+		}
 
 	}
 
 
 	//^^^^^^^^^^^^^^^^^^ AJAX SETTERS ^^^^^^^^^^^^^^^^^^//
 
-	public function ajax_update_post( array $args = [] ){
+	public function ajax_update_post( array $input ){
+
+		$input = array_merge( $input, $_GET, $_POST );
+
+		$ajax = $this->update_post( $input );
+
+		echo( json_encode( $ajax ) );
 
 	}
 
-	public function ajax_delete_post( array $args = [] ){
+	public function ajax_delete_post( array $input ){
+
+		$input = array_merge( $input, $_GET, $_POST );
+
+		$ajax = $this->delete_post( $input );
+
+		echo( json_encode( $ajax ) );
 
 	}
 
@@ -706,7 +787,17 @@ class Starky {
 
 		$ajax = $this->new_post( $input );
 
-		return json_encode( $ajax );
+		echo( json_encode( $ajax ) );
+
+	}
+
+	public function ajax_upsert_post( array $input ){
+
+		$input = array_merge( $input, $_GET, $_POST );
+
+		$ajax = $this->upsert_post( $input );
+
+		echo( json_encode( $ajax ) );
 
 	}
 

@@ -10,7 +10,7 @@ $output = new Starky;
 
 <?php
 
-$content = $output->get_posts(/*['post_id' => 2]*/); ?>
+$content = $output->get_page(['id' => 2]); ?>
 
 <h1><?php echo $content['title']; ?></h1>
 

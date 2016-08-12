@@ -21,4 +21,6 @@ $_SETTINGS['posts_per_page'] = 10;
 //**** Site settings ****//
 $_SETTINGS['site_title'] = 'Starky CMS';
 
+$_SETTINGS['time_zone'] = 'America/Chicago'; // Time zones listed here: http://php.net/manual/en/timezones.php
+
 ?>
