@@ -5,10 +5,11 @@
 
 # Documentation
 
+----
 ##Starky Object
 ###*Starky( array $args = [] )*
 
-
+----
 ##Getters
 
 ###*get_posts( array $args = [] )*
@@ -21,7 +22,7 @@
 
 ###*get_author( $id )*
 
-
+----
 ##AJAX Getters
 
 ###*ajax_get_posts( array $args = [] )*
@@ -32,7 +33,7 @@
 
 ###*ajax_starky_title()*
 
-
+----
 ##Setters
 
 ###*new_post( array $input = [] )*
@@ -43,7 +44,7 @@
 
 ###*upsert_post( array $input )*
 
-
+----
 ##AJAX Setters
 
 ###*ajax_new_post( array $input )*
@@ -54,7 +55,7 @@
 
 ###*ajax_upsert_post( array $input )*
 
-
+----
 ##Starky Standard Arguments
 
 ###*col_names (associative array)*
@@ -70,7 +71,6 @@
 ###*slug (string)*
 
 ----
-
 #EXAMPLES
 
 ###*Shortcutting getting posts/pages*
