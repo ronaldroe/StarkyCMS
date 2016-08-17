@@ -13,6 +13,7 @@
 		'title' => 'Test page title 123',
 		'thumbnail' => 'http://placekitten.com/150x150',
 		'author_id' => 1,
+		'status' => 'published',
 		'content' => 'This is some test content. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempore, consequuntur, dolor enim dicta ex voluptates praesentium voluptatibus deleniti quidem rerum temporibus nostrum aut quod aspernatur maxime minus magnam assumenda natus animi dignissimos doloribus? Aliquid, laborum, officiis, ipsam odit error quos officia id est repudiandae nisi eligendi sed aliquam ab nostrum!'
 	];
 	

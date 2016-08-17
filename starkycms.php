@@ -115,8 +115,14 @@ class Starky {
 
 		}
 
+		if( !isset( $args['status'] ) ){
+
+			$args['status'] = 'published';
+
+		}
+
 		/// Build WHERE portion of the query
-		$where = " WHERE post_type='" . $args['post_type'] . "'";
+		$where = " WHERE post_type='" . $args['post_type'] . "' AND status='" . $args['status'] . "'";
 
 		if( !empty( $args['col_names'] ) ){
 
@@ -160,8 +166,10 @@ class Starky {
 
 		}
 
+		$orderby = " ORDER BY date_created DESC";
+
 		/// Build
-		$sql = $sql . $where . $limit . $offset;
+		$sql = $sql . $where . $orderby . $limit . $offset;
 
 		/// Connect and run query
 		$con = $this->connect_db( $settings );
@@ -227,7 +235,7 @@ class Starky {
 
 	}
 
-	protected function mysql_get_page( array $args = [] ){
+	protected function mysql_get_page( array $args ){
 
 		$args['post_type'] = 'page';
 
@@ -805,7 +813,7 @@ class Starky {
 	//^^^^^^^^^^^^^^^^^^ AJAX SETTERS ^^^^^^^^^^^^^^^^^^//
 
 	
-	public function ajax_new_post( array $input ){
+	public function ajax_new_post( array $input = [] ){
 
 		$input = array_merge( $input, $_GET, $_POST );
 
@@ -815,7 +823,7 @@ class Starky {
 
 	}
 
-	public function ajax_update_post( array $input ){
+	public function ajax_update_post( array $input = [] ){
 
 		$input = array_merge( $input, $_GET, $_POST );
 
@@ -825,7 +833,7 @@ class Starky {
 
 	}
 
-	public function ajax_delete_post( array $input ){
+	public function ajax_delete_post( array $input = [] ){
 
 		$input = array_merge( $input, $_GET, $_POST );
 
@@ -835,7 +843,7 @@ class Starky {
 
 	}
 
-	public function ajax_upsert_post( array $input ){
+	public function ajax_upsert_post( array $input = [] ){
 
 		$input = array_merge( $input, $_GET, $_POST );
 
