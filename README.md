@@ -74,4 +74,4 @@
 
 ###*Shortcutting getting posts/pages*
 
-###*Shortcuttion new post*
+###*Shortcutting new post*
