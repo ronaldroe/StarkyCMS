@@ -5,7 +5,6 @@
 
 # Documentation
 
-----
 ##Starky Object
 ###*Starky( array $args = [] )*
 

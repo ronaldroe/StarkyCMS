@@ -2,10 +2,9 @@
 
 include_once('starkycms.php');
 
-$output = new Starky('connect');
+$output = new Starky;
 
 ?>
-
 <!DOCTYPE html><html><head><title><?php echo $output->starky_title(); ?></title></head><body>
 
 <?php
