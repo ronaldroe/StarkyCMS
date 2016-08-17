@@ -6,14 +6,14 @@
 # Documentation
 
 ##Starky Object
-###*Starky( array $args = [] )*
+###*Starky( array $args = [ ] )*
 
 ----
 ##Getters
 
-###*get_posts( array $args = [] )*
+###*get_posts( array $args = [ ] )*
 
-###*get_page( array $args = [] )*
+###*get_page( array $args = [ ] )*
 
 ###*starky_title()*
 
@@ -24,9 +24,9 @@
 ----
 ##AJAX Getters
 
-###*ajax_get_posts( array $args = [] )*
+###*ajax_get_posts( array $args = [ ] )*
 
-###*ajax_get_page( array $args = [] )*
+###*ajax_get_page( array $args = [ ] )*
 
 ###*ajax_get_author( $id )*
 
@@ -35,7 +35,7 @@
 ----
 ##Setters
 
-###*new_post( array $input = [] )*
+###*new_post( array $input = [ ] )*
 
 ###*update_post( array $input )*
 
