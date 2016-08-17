@@ -26,7 +26,7 @@ class Starky {
 
 	//****************************** CONSTRUCTOR ******************************//
 
-	function __construct( $init_type = '', array $args = [] ){
+	function __construct( array $args = [] ){
 
 		// Attach settings
 		$settings = $this->get_settings();
@@ -35,25 +35,21 @@ class Starky {
 
 		unset( $this->settings['host_name'], $this->settings['password'], $this->settings['username'], $this->settings['db_name'] );
 
-		if( empty( $init_type ) || $init_type = 'connect' || $init_type == '' || $init_type = null ){
+		if( isset( $args['action'] ) && $args['action'] == 'get' ){
 
-			if( $this->settings['db_type'] == 'mysql' ){
+			if( $args['post_type'] == 'post' ){
 
-				$this->con = $this->connect_db( $settings );
+				$this->get_posts( $args );
 
-			}
-			else{
+			} elseif( $args['post_type'] == 'page' ){
 
-				die( 'ERROR: Database type is not set or is invalid/unsupported.' );
+				$this->get_page( $args );
 
-			}
+			}			
 			
-			return $this->con;
-			
-		}
-		elseif ( $init_type == 'none'  ){
-			
-			return;
+		} elseif( isset( $args['action'] ) && $args['action'] == 'new' ){
+
+			$this->new_post( $args );
 
 		}
 
@@ -169,7 +165,7 @@ class Starky {
 
 
 		/// Add author info to each post and decode post_meta
-		for ( $i = 0; $i < count( $posts ); $i++ ){
+		for( $i = 0; $i < count( $posts ); $i++ ){
 
 			$author = $this->mysql_get_author( $con, $posts[$i]['author_id']);
 
@@ -180,6 +176,16 @@ class Starky {
 			$posts[$i]['post_meta'] = $post_meta_temp;
 
 			unset( $posts[$i]['author_id'] );
+
+		}
+
+		foreach( $posts as $post ){
+
+			$post['title'] = stripslashes( $post['title'] );
+
+			$post['content'] = stripslashes( $post['content'] );
+
+			$post['excerpt'] = stripslashes( $post['excerpt'] );
 
 		}
 
@@ -273,6 +279,12 @@ class Starky {
 			$post_meta_temp = json_decode( $page['post_meta'] );
 			
 			$page['post_meta'] = $post_meta_temp;
+
+			$page['title'] = stripslashes( $page['title'] );
+
+			$page['content'] = stripslashes( $page['content'] );
+
+			$page['excerpt'] = stripslashes( $page['excerpt'] );
 		}
 
 		$con->close();
@@ -365,7 +377,7 @@ class Starky {
 
 	}
 
-	public function ajax_get_author( int $id ){
+	public function ajax_get_author( $id ){
 
 		echo json_encode( $this->get_author( $id ) );
 
@@ -389,18 +401,18 @@ class Starky {
 		}
 		else{
 
-			$input['title'] = mysql_real_escape_string( $input['title'] );
+			$input['title'] = mysqli_real_escape_string( $input['title'] );
 
-			$input['content'] = mysql_real_escape_string( $input['content'] );
+			$input['content'] = mysqli_real_escape_string( $input['content'] );
 
-			$input['excerpt'] = mysql_real_escape_string( $input['excerpt'] );
+			$input['excerpt'] = mysqli_real_escape_string( $input['excerpt'] );
 
 			$settings = $this->get_settings();
 
 			if( $settings['db_type'] == 'mysql' ){
 
 				$output = $this->mysql_new_post( $input );
-
+ 
 				return $output;
 
 			}
@@ -529,19 +541,19 @@ class Starky {
 
 			if( isset( $input['title'] ) ){
 
-				$input['title'] = mysql_real_escape_string( $input['title'] );
+				$input['title'] = mysqli_real_escape_string( $input['title'] );
 
 			}
 
 			if( isset( $input['content'] ) ){
 
-				$input['content'] = mysql_real_escape_string( $input['content'] );
+				$input['content'] = mysqli_real_escape_string( $input['content'] );
 
 			}
 
 			if( isset( $input['excerpt'] ) ){
 
-				$input['excerpt'] = mysql_real_escape_string( $input['excerpt'] );
+				$input['excerpt'] = mysqli_real_escape_string( $input['excerpt'] );
 
 			}
 		
@@ -761,6 +773,17 @@ class Starky {
 
 	//^^^^^^^^^^^^^^^^^^ AJAX SETTERS ^^^^^^^^^^^^^^^^^^//
 
+	
+	public function ajax_new_post( array $input ){
+
+		$input = array_merge( $input, $_GET, $_POST );
+
+		$ajax = $this->new_post( $input );
+
+		echo( json_encode( $ajax ) );
+
+	}
+
 	public function ajax_update_post( array $input ){
 
 		$input = array_merge( $input, $_GET, $_POST );
@@ -776,16 +799,6 @@ class Starky {
 		$input = array_merge( $input, $_GET, $_POST );
 
 		$ajax = $this->delete_post( $input );
-
-		echo( json_encode( $ajax ) );
-
-	}
-
-	public function ajax_new_post( array $input ){
-
-		$input = array_merge( $input, $_GET, $_POST );
-
-		$ajax = $this->new_post( $input );
 
 		echo( json_encode( $ajax ) );
 
