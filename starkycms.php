@@ -20,7 +20,7 @@ class Starky {
 
 	//****************************** PROPERTIES ******************************//
 
-	public $con;
+	protected $con;
 
 	private $settings;
 
@@ -50,6 +50,12 @@ class Starky {
 		} elseif( isset( $args['action'] ) && $args['action'] == 'new' ){
 
 			$this->new_post( $args );
+
+		}
+
+		if( $this->settings['db_type'] == 'mysql' ){
+
+			$this->con = $this->connect_db( $settings );
 
 		}
 
@@ -96,7 +102,6 @@ class Starky {
 	protected function mysql_get_posts( array $args = [] ){
 
 		/// Set current page
-		$args = array_merge( $args, $_GET, $_POST );
 		
 		$settings = $this->get_settings();
 
@@ -192,10 +197,12 @@ class Starky {
 		if ( $con->error ){
 			
 			echo( $con->error );
+			$con->close();
 			return;
 
 		}
 
+		$con->close();
 		return $posts;
 
 	}
@@ -222,7 +229,6 @@ class Starky {
 
 	protected function mysql_get_page( array $args = [] ){
 
-		$args = array_merge( $args, $_GET, $_POST );
 		$args['post_type'] = 'page';
 
 		$settings = $this->get_settings();
@@ -263,6 +269,7 @@ class Starky {
 		if ( $con->error ){
 			
 			echo( $con->error );
+			$con->close();
 			return;
 
 		}
@@ -305,10 +312,11 @@ class Starky {
 
 		$settings = $this->get_settings();
 
-		$output = [];
+		if( $timezone == null ){
 
-		if( $timezone == null )
 			$timezone = $settings['time_zone'];
+
+		}
 
 		$datetime = new DateTime();
 
@@ -334,7 +342,11 @@ class Starky {
 
 		if( $settings['db_type'] == 'mysql' ){
 
-			return $this->mysql_get_author( $con, $id );
+			$output = $this->mysql_get_author( $con, $id );
+
+			$con->close();
+
+			return $output;
 
 		}
 
@@ -392,7 +404,7 @@ class Starky {
 	//^^^********************** SETTERS **********************^^^//
 
 
-	public function new_post( array $input = [] ){
+	public function new_post( array $input ){
 
 		if( !$input ){
 
@@ -401,11 +413,23 @@ class Starky {
 		}
 		else{
 
-			$input['title'] = mysqli_real_escape_string( $input['title'] );
+			if( isset( $input['title'] ) ){
 
-			$input['content'] = mysqli_real_escape_string( $input['content'] );
+				$input['title'] = mysqli_real_escape_string( $this->con, $input['title'] );
 
-			$input['excerpt'] = mysqli_real_escape_string( $input['excerpt'] );
+			}
+
+			if( isset( $input['content'] ) ){
+
+				$input['content'] = mysqli_real_escape_string( $this->con, $input['content'] );
+
+			}
+
+			if( isset( $input['excerpt'] ) ){
+
+				$input['excerpt'] = mysqli_real_escape_string( $this->con, $input['excerpt'] );
+
+			}
 
 			$settings = $this->get_settings();
 
@@ -427,8 +451,6 @@ class Starky {
 	}
 
 	protected function mysql_new_post( array $input ){
-
-		$input = array_merge( $input, $_GET, $_POST );
 		
 		$settings = $this->get_settings();
 
@@ -522,10 +544,13 @@ class Starky {
 
 		if ( $con->error ){
 			
-			return $con->error;
+			$error = $con->error;
+			$con->close();
+			return $error;
 
 		}
 
+		$con->close();
 		return $info_out;
 
 	}
@@ -541,19 +566,19 @@ class Starky {
 
 			if( isset( $input['title'] ) ){
 
-				$input['title'] = mysqli_real_escape_string( $input['title'] );
+				$input['title'] = mysqli_real_escape_string( $this->con, $input['title'] );
 
 			}
 
 			if( isset( $input['content'] ) ){
 
-				$input['content'] = mysqli_real_escape_string( $input['content'] );
+				$input['content'] = mysqli_real_escape_string( $this->con, $input['content'] );
 
 			}
 
 			if( isset( $input['excerpt'] ) ){
 
-				$input['excerpt'] = mysqli_real_escape_string( $input['excerpt'] );
+				$input['excerpt'] = mysqli_real_escape_string( $this->con, $input['excerpt'] );
 
 			}
 		
@@ -577,8 +602,6 @@ class Starky {
 	}
 
 	protected function mysql_update_post( array $input ){
-
-		$input = array_merge( $input, $_GET, $_POST );
 
 		if( isset($input['post_id']) ){ 
 
@@ -636,6 +659,8 @@ class Starky {
 
 		// Create slug
 		$columns['slug'] = $this->get_slug( $input['title'] );
+
+		$columns['date_updated'] = $this->get_datetime();
 		
 		$count = 0;
 		
@@ -691,10 +716,13 @@ class Starky {
 		
 		if ( $con->error ){
 			
-			return $con->error;
+			$error = $con->error;
+			$con->close();
+			return $error;
 
 		}
 
+		$con->close();
 		return $info_out;
 		
 	}
@@ -712,7 +740,9 @@ class Starky {
 
 			if( $settings['db_type'] == 'mysql' ){
 
-				$this->mysql_delete_post( $input );
+				$output = $this->mysql_delete_post( $input );
+
+				return $output;
 
 			}
 			else{
@@ -726,8 +756,6 @@ class Starky {
 	}
 
 	protected function mysql_delete_post( array $input ){
-
-		$input = array_merge( $input, $_GET, $_POST );
 
 		if( isset($input['post_id']) ){ 
 
@@ -747,10 +775,13 @@ class Starky {
 
 		if ( $con->error ){
 			
-			return $con->error;
+			$error = $con->error;
+			$con->close();
+			return $error;
 
 		}
 
+		$con->close();
 		return $info_out;
 
 	}
@@ -861,6 +892,7 @@ class Starky {
 			
 		}
 		
+		$con->close();
 		return $post_meta_out;
 		
 	}

@@ -11,66 +11,74 @@
 ----
 ##Getters
 
-###*get_posts( array $args = [ ] )*
+###*get_author( int $id )*
+
+###*get_datetime( string $timezone = null )*
 
 ###*get_page( array $args = [ ] )*
 
+###*get_posts( array $args = [ ] )*
+
 ###*starky_title()*
-
-###*get_datetime( $timezone = null )*
-
-###*get_author( $id )*
 
 ----
 ##AJAX Getters
 
-###*ajax_get_posts( array $args = [ ] )*
+###*ajax_get_author( int $id )*
 
 ###*ajax_get_page( array $args = [ ] )*
 
-###*ajax_get_author( $id )*
+###*ajax_get_posts( array $args = [ ] )*
 
 ###*ajax_starky_title()*
 
 ----
 ##Setters
 
-###*new_post( array $input = [ ] )*
+###*delete_post( array $input )*
+
+###*new_post( array $input )*
 
 ###*update_post( array $input )*
-
-###*delete_post( array $input )*
 
 ###*upsert_post( array $input )*
 
 ----
 ##AJAX Setters
 
+###*ajax_delete_post( array $input )*
+
 ###*ajax_new_post( array $input )*
 
 ###*ajax_update_post( array $input )*
-
-###*ajax_delete_post( array $input )*
 
 ###*ajax_upsert_post( array $input )*
 
 ----
 ##Starky Standard Arguments
 
-###*col_names (associative array)*
+###*col_names - associative array*
 
-###*post_type (string)*
+###*post_type - string*
 
-###*paged (int)*
+###*paged - int*
 
-###*posts_per_page (int)*
+###*posts_per_page - int*
 
-###*post_id (int)*
+###*post_id - int*
 
-###*slug (string)*
+###*slug - string*
 
 ----
 #EXAMPLES
+
+###*Get posts by id*
+
+###*Get posts by slug*
+
+###*Add new post*
+
+###*Update post*
 
 ###*Shortcutting getting posts/pages*
 
