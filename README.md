@@ -6,6 +6,7 @@
 ##To Do
 
 - Install script
+- Automatic Excerpts
 
 ----
 #Documentation

@@ -90,3 +90,10 @@
  <pre>
  	<?php print_r( $get_deleted ); ?>
  </pre>
+
+
+ <hr />
+ <h2>Shortcut Get Posts</h2>
+ <pre>
+ 	<?php print_r( $test_two ); ?>
+ </pre>
