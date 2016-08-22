@@ -18,6 +18,7 @@
 	- 'action'
 		- 'get' - Retrieves either posts or a page by setting the 'post_type'
 		- 'new' - Adds new post
+
 All arguments are optional. It is possible to use the 'action' argument in conjunction with 'post_type' and other post data to retrieve or create new posts or pages. See below for examples.
 
 ----
@@ -31,11 +32,13 @@ Returns author data.
 ###*get_datetime( string $timezone = null )*
 - Return type: string
 - Accepts timezone as string, defaults to timezone in settings if empty. List of accepted timezones here: <http://php.net/manual/en/timezones.php>
+
 Returns current timestamp formatted for MySQL input.
 
 ###*get_page( array $args )*
 - Return type: array
 - Accepts Starky standard arguments array
+
 Returns data for requested page. Currently, pages can be pulled by either id or slug. Will priortize id over slug if both are passed.
 
 ###*get_posts( array $args = [ ] )*
@@ -49,6 +52,7 @@ If no arguments are passed, most recent posts are returned.
 
 ###*starky_title()*
 - Return type: string
+
 Returns the title set in s_settings.php
 
 ----
@@ -65,6 +69,7 @@ These methods are AJAX wrappers for their respective methods. Except where noted
 	1. $_POST
 	2. $_GET
 	3. $args input
+
 The arguments array is optional in this context. $_GET and $_POST are passed automatically. $_POST values have the highest priorty, and will override other values for the same input.
 
 ###*ajax_get_posts( array $args = [ ] )*
@@ -73,6 +78,7 @@ The arguments array is optional in this context. $_GET and $_POST are passed aut
 	1. $_POST
 	2. $_GET
 	3. $args input
+
 The arguments array is optional in this context. $_GET and $_POST are passed automatically. $_POST values have the highest priorty, and will override other values for the same input.
 
 ###*ajax_starky_title()*
@@ -84,21 +90,25 @@ The arguments array is optional in this context. $_GET and $_POST are passed aut
 ###*delete_post( array $input )*
 - Return type: int or string
 - If delete is successful, returns 1. If delete fails, returns error string.
+
 Accepts input array with id or post_id assigned/*required*.
 
 ###*new_post( array $input )*
 - Return type: int or string
 - If insert is successful, returns 1. If insert fails, returns error string.
+
 Accepts Starky standard arguments array. See below for more details. 
 
 ###*update_post( array $input )*
 - Return type: int or string
 - If update is successful, returns 1. If update fails, returns error string.
+
 Accepts Starky standard arguments array. See below for more details. id or post_id *required*.
 
 ###*upsert_post( array $input )*
 - Return type: int or string
 - If upsert is successful, returns 1. If upsert fails, returns error string.
+
 Accepts Starky standard arguments array. If id or post_id are passed, existing post is updated, otherwise new post is created.
 
 ----
@@ -113,6 +123,7 @@ These methods are AJAX wrappers for their respective methods. Except where noted
 	1. $_POST
 	2. $_GET
 	3. $args input
+
 The arguments array is optional in this context. $_GET and $_POST are passed automatically. $_POST values have the highest priorty, and will override other values for the same input.
 
 ###*ajax_update_post( array $input = [ ] )*
@@ -121,6 +132,7 @@ The arguments array is optional in this context. $_GET and $_POST are passed aut
 	1. $_POST
 	2. $_GET
 	3. $args input
+
 The arguments array is optional in this context. $_GET and $_POST are passed automatically. $_POST values have the highest priorty, and will override other values for the same input.
 
 ###*ajax_upsert_post( array $input = [ ] )*
@@ -128,6 +140,7 @@ The arguments array is optional in this context. $_GET and $_POST are passed aut
 	1. $_POST
 	2. $_GET
 	3. $args input
+
 The arguments array is optional in this context. $_GET and $_POST are passed automatically. $_POST values have the highest priorty, and will override other values for the same input.
 
 ----
