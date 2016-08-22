@@ -40,11 +40,13 @@
       UNIQUE KEY `id_UNIQUE` (`id`)
     )";
 
-    $con->query( $posts_table )
-    or die( "Error: " . $con->error );
+    $con->query( $posts_table );
 
-    $con->query( $users_table )
-    or die( "Error: " . $con->error );
+    $post_error = $con->error;
+
+    $con->query( $users_table );
+
+    $user_error = $con->error;
 
  ?>
 <!DOCTYPE html>
@@ -54,6 +56,28 @@
 </head>
 <body>
 	<h1>Starky CMS Installation</h1>
+
+    <?php 
+
+    if( !$post_error && !$user_error ){
+
+        echo( "<h2>Looks like everything worked</h2>" );
+
+    } 
+
+    if( $post_error ){
+
+        echo( "<h2>There was an error creating the posts table: " . $post_error . "</h2>" );
+
+    } 
+
+    if( $user_error ){
+
+        echo( "<h2>There was an error creating the users table: " . $user_error . "</h2>" );
+
+    }
+
+     ?>
 
 </body>
 </html>

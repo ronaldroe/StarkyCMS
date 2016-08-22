@@ -7,7 +7,7 @@ $_SETTINGS['host_name'] = 'localhost';
 
 $_SETTINGS['username'] = 'root';
 
-$_SETTINGS['password'] = '28152815';
+$_SETTINGS['password'] = 'password';
 
 $_SETTINGS['db_name'] = 'starky';
 
