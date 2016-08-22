@@ -2,7 +2,12 @@
 ###A PHP Headless Content Management System by Ronald Roe
 
 ####Note: This CMS is in a very early stage. All security is on the developer. While the user table *does* have a password column, it is not ready for use in a secure environment. TL;DR - Don't use this for anything where security is a concern.
+----
+##To Do
 
+- Install script
+
+----
 #Documentation
 
 ##Starky Object
@@ -128,30 +133,111 @@ The arguments array is optional in this context. $_GET and $_POST are passed aut
 ##Starky Standard Arguments
 
 ###*col_names - array*
+Used to target posts table columns that do not have an attached argument.
+Works with: get_posts()
+
+###excerpt
+Store a short excerpt for the post.
 
 ###*id - int*
+Corresponds to the post's id.
+Works with: all get/set methods
 
 ###*paged - int*
+Paging variable. With posts_per_page, determines offset for current page. Actual page is paged + 1, i.e. paged = 1 for page 2.
+Note: to determine the current page, paged is multiplied by posts_per_page to create an offset.
+Works with: get_posts()
 
 ###*post_id - int*
+Alias for id. If both are provided, post_id takes priority.
+Works with: all get/set methods
 
 ###*post_type - string*
+Sets post type. Custom post types are allowed.
+Note: to insert a new page, 'page' *must* be passed as the post_type.
+Works with: all get/set methods except get_page()
 
 ###*posts_per_page - int*
+Overrides posts_per_page from s_settings.php
+Works with: get_posts()
 
 ###*slug - string*
+Pass to retrieve post by slug.
+Works with: get methods
+
+----
+##Post Meta
+The post_meta column stores input as JSON that is converted to an array on retrieval. Any data passed to new_post(), update_post() or upsert_post() that does not correspond to an existing column or other standard input will be stored as part of post_meta automatically. This is the perfect place to store any extra post data such as post images/thumbnails.
+
+Troubleshooting information: if you're attempting to post data and it doesn't appear to be going where you'd expect, check the post_meta. If the argument name is misspelled or otherwise mistyped, the data will go into post_meta.
 
 ----
 #EXAMPLES
 
 ###*Get posts by id*
 
+```PHP
+$s = new Starky;
+
+$post = s->get_posts( ['id' => 1] );
+// post with id = 1 is retrieved as $post[0];
+```
+
 ###*Get posts by slug*
+
+```PHP
+$s = new Starky;
+
+$post = s->get_posts( ['slug' => 'my-post-slug'] );
+```
 
 ###*Add new post*
 
+```PHP
+$s = new Starky;
+
+// This array is only necessary if not using $_POST or $_GET or if you need to pass more information
+$post_args = [
+	'title' => 'Starky CMS is the Best Ever',
+	'content' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Necessitatibus sunt esse dicta ullam doloremque temporibus ipsa culpa rem magni alias voluptate quo corrupti, nesciunt ducimus repellat impedit minus iure, eveniet laboriosam voluptatem. Blanditiis placeat, eaque nisi, cupiditate, tenetur quod excepturi vitae repellat est a ipsa cumque porro? Hic, quos atque.',
+	'excerpt' => 'Lorem ipsum dolor sit amet...'
+];
+
+$s->new_post( $post_args );
+```
+
 ###*Update post*
+```PHP
+$s = new Starky;
+
+// This array is only necessary if not using $_POST or $_GET or if you need to pass more information
+$post_args = [
+	'id' => 2, // Required for update
+	'title' => 'Updated Post Title'
+];
+
+$s->update_post( $post_args );
+```
 
 ###*Shortcutting getting posts/pages*
+```PHP
+$post_args = [
+	'action' => 'get', // Required to get posts
+	'id' => 2
+];
+
+$s = new Starky( $post_args );
+```
 
 ###*Shortcutting new post*
+```PHP
+// This array is only necessary if not using $_POST or $_GET or if you need to pass more information
+$post_args = [
+	'action' => 'new', // Required for new post
+	'title' => 'Starky CMS is the Best Ever',
+	'content' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Necessitatibus sunt esse dicta ullam doloremque temporibus ipsa culpa rem magni alias voluptate quo corrupti, nesciunt ducimus repellat impedit minus iure, eveniet laboriosam voluptatem. Blanditiis placeat, eaque nisi, cupiditate, tenetur quod excepturi vitae repellat est a ipsa cumque porro? Hic, quos atque.',
+	'excerpt' => 'Lorem ipsum dolor sit amet...'
+];
+
+$s = new Starky( $post_args );
+```

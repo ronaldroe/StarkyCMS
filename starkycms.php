@@ -185,6 +185,8 @@ class Starky {
 			$posts[$i]['author'] = $author;
 			
 			$post_meta_temp = json_decode( $posts[$i]['post_meta'] );
+
+			$post_meta_temp = $post_meta_temp[0];
 			
 			$posts[$i]['post_meta'] = $post_meta_temp;
 
@@ -293,7 +295,7 @@ class Starky {
 			
 			$post_meta_temp = json_decode( $page['post_meta'] );
 			
-			$page['post_meta'] = $post_meta_temp;
+			$page['post_meta'] = $post_meta_temp[0];
 
 			$page['title'] = stripslashes( $page['title'] );
 
