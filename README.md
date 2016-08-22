@@ -6,7 +6,7 @@
 
 Starky is an AJAX-ready content storage and retrieval developer API ideal for blogging platforms and simple page management.
 
-*Note: This CMS is in alpha. All security is on the developer. While the user table *does* have a password column, it is not ready for use in a secure environment. TL;DR - Don't use this for anything where security is a concern.*
+*Note: This CMS is in alpha. All security is on the developer. While the user table does have a password column, it is not ready for use in a secure environment. TL;DR - Don't use this for anything where security is a concern.*
 
 ----
 ##To Do
