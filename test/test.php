@@ -34,6 +34,8 @@
 	$delete = $test->delete_post( $update_args );
 	
 	$get_deleted = $test->get_posts( ['post_id' => $update_args['id']] );
+
+	$test_two = new Starky( ['action' => 'get'] ); 
 	
  ?>
  <h2>Class output</h2>

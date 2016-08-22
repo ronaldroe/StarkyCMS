@@ -185,12 +185,14 @@ class Starky {
 			$author = $this->mysql_get_author( $con, $posts[$i]['author_id']);
 
 			$posts[$i]['author'] = $author;
-			
-			$post_meta_temp = json_decode( $posts[$i]['post_meta'] );
+			if( isset( $posts[$i]['post_meta'] ) ){
+				$post_meta_temp = json_decode( $posts[$i]['post_meta'] );
 
-			$post_meta_temp = $post_meta_temp[0];
-			
-			$posts[$i]['post_meta'] = $post_meta_temp;
+				$post_meta_temp = $post_meta_temp[0];
+				
+				$posts[$i]['post_meta'] = $post_meta_temp;
+
+			}
 
 			unset( $posts[$i]['author_id'] );
 
