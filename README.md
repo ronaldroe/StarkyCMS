@@ -250,15 +250,15 @@ $s = new Starky( $post_args );
 // post with id = 2 is retrieved as $s->output[0];
 ```
 
-###*Shortcutting getting posts*
+###*Shortcutting getting page*
 ```PHP
-$post_args = [
-	'action' => 'get', // Required to get posts
+$page_args = [
+	'action' => 'get', // Required to get page
 	'post_type' => 'page',
 	'id' => 3
 ];
 
-$s = new Starky( $post_args );
+$s = new Starky( $page_args );
 // page with id = 3 is retrieved as $s->output;
 ```
 
