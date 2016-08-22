@@ -69,7 +69,7 @@ class Starky {
 
 		if( $settings['db_type'] == 'mysql' ){
 
-			$con = new mysqli( $settings['host_name'], $settings['username'], $settings['password'], $settings['db_name'] ) 
+			$con = new mysqli( $settings['host_name'], $settings['username'], $settings['password'], $settings['db_name'] )
 
 			or die( "Could not connect: " . $mysqli->connect_error );
 
