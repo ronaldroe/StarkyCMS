@@ -24,6 +24,8 @@ class Starky {
 
 	private $settings;
 
+	public $output;
+
 	//****************************** CONSTRUCTOR ******************************//
 
 	function __construct( array $args = [] ){
@@ -37,19 +39,19 @@ class Starky {
 
 		if( isset( $args['action'] ) && $args['action'] == 'get' ){
 
-			if( $args['post_type'] == 'post' ){
+			if( !isset( $args['post_type'] ) || $args['post_type'] == 'post' ){
 
-				$this->get_posts( $args );
+				$this->output = $this->get_posts( $args );
 
 			} elseif( $args['post_type'] == 'page' ){
 
-				$this->get_page( $args );
+				$this->output = $this->get_page( $args );
 
 			}			
 			
 		} elseif( isset( $args['action'] ) && $args['action'] == 'new' ){
 
-			$this->new_post( $args );
+			$this->output = $this->new_post( $args );
 
 		}
 

@@ -136,8 +136,13 @@ The arguments array is optional in this context. $_GET and $_POST are passed aut
 Used to target posts table columns that do not have an attached argument.
 Works with: get_posts()
 
-###excerpt
+###*content - string*
+Page content.
+Works with: set methods
+
+###*excerpt - string*
 Store a short excerpt for the post.
+Works with: set methods
 
 ###*id - int*
 Corresponds to the post's id.
@@ -183,12 +188,23 @@ $post = s->get_posts( ['id' => 1] );
 // post with id = 1 is retrieved as $post[0];
 ```
 
+###*Get page by id*
+
+```PHP
+$s = new Starky;
+
+$page = s->get_page( ['id' => 3] );
+// page with id = 3 is retrieved as $page;
+```
+
 ###*Get posts by slug*
+Note: this also works with get_page()
 
 ```PHP
 $s = new Starky;
 
 $post = s->get_posts( ['slug' => 'my-post-slug'] );
+// post with slug = 'my-post-slug' is retrieved as $post[0];
 ```
 
 ###*Add new post*
@@ -204,6 +220,7 @@ $post_args = [
 ];
 
 $s->new_post( $post_args );
+// Returns 1 if successful, error text if fails
 ```
 
 ###*Update post*
@@ -217,16 +234,31 @@ $post_args = [
 ];
 
 $s->update_post( $post_args );
+// Returns 1 if successful, error text if fails
 ```
 
-###*Shortcutting getting posts/pages*
+###*Shortcutting getting posts*
 ```PHP
 $post_args = [
 	'action' => 'get', // Required to get posts
+	'post_type' => 'post', // Optional for posts, not for pages
 	'id' => 2
 ];
 
 $s = new Starky( $post_args );
+// post with id = 2 is retrieved as $s->output[0];
+```
+
+###*Shortcutting getting posts*
+```PHP
+$post_args = [
+	'action' => 'get', // Required to get posts
+	'post_type' => 'page',
+	'id' => 3
+];
+
+$s = new Starky( $post_args );
+// page with id = 3 is retrieved as $s->output;
 ```
 
 ###*Shortcutting new post*
@@ -240,4 +272,5 @@ $post_args = [
 ];
 
 $s = new Starky( $post_args );
+// $s->output is 1 if successful, error text if fails
 ```
