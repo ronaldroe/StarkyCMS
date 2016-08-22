@@ -7,6 +7,7 @@
 
 - Install script
 - Automatic Excerpts
+- Author/user set/get
 
 ----
 #Documentation
