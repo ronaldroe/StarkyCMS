@@ -61,7 +61,7 @@
 
     if( !$post_error && !$user_error ){
 
-        echo( "<h2>Looks like everything worked</h2>" );
+        echo( "<h2>Looks like everything worked</h2><p>Delete this installer file</p>" );
 
     } 
 

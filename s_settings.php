@@ -2,7 +2,7 @@
 
 $_SETTINGS = [];
 
-//**** Database connection information ****//
+//**** Database connection information - Required for installation ****//
 $_SETTINGS['host_name'] = 'localhost';
 
 $_SETTINGS['username'] = 'root';
@@ -11,9 +11,10 @@ $_SETTINGS['password'] = 'password';
 
 $_SETTINGS['db_name'] = 'starky';
 
-$_SETTINGS['db_type'] = 'mysql'; // Currently supports 'mysql'
-
 $_SETTINGS['tbl_prefix'] = 'stk';
+//**** End connection information ****//
+
+$_SETTINGS['db_type'] = 'mysql'; // Currently supports 'mysql'
 
 //**** Content settings ****//
 $_SETTINGS['posts_per_page'] = 10;

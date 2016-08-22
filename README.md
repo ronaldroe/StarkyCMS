@@ -1,13 +1,35 @@
 #Starky CMS
+
+*0.1a*
+
 ###A PHP Headless Content Management System by Ronald Roe
 
-####Note: This CMS is in a very early stage. All security is on the developer. While the user table *does* have a password column, it is not ready for use in a secure environment. TL;DR - Don't use this for anything where security is a concern.
+Starky is an AJAX-ready content storage and retrieval developer API ideal for blogging platforms and simple page management.
+
+*Note: This CMS is in alpha. All security is on the developer. While the user table *does* have a password column, it is not ready for use in a secure environment. TL;DR - Don't use this for anything where security is a concern.*
+
 ----
 ##To Do
 
-- Install script
+Near term:
+
 - Automatic Excerpts
-- Author/user set/get
+- Author/user setters
+
+Long term:
+
+- Menus
+- Standard backend
+
+----
+#Installation
+
+The install script is *very* basic. It *only* creates the tables.
+
+1. Place files in the working directory
+2. Open s_settings.php and set the information as required. The connection information and table prefix (default value is acceptable) are required for installation.
+3. Spin up a server if required and go to installer.php
+4. If there are no errors, delete installer.php
 
 ----
 #Documentation
