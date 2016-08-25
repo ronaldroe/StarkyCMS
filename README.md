@@ -309,7 +309,6 @@ $s = new Starky( $page_args );
 
 ###*Shortcutting new post*
 ```PHP
-// This array is only necessary if not using $_POST or $_GET or if you need to pass more information
 $post_args = [
 	'action' => 'new', // Required for new post
 	'title' => 'Starky CMS is the Best Ever',
