@@ -258,7 +258,6 @@ $post = s->get_posts( ['slug' => 'my-post-slug'] );
 ```PHP
 $s = new Starky;
 
-// This array is only necessary if not using $_POST or $_GET or if you need to pass more information
 $post_args = [
 	'title' => 'Starky CMS is the Best Ever',
 	'content' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Necessitatibus sunt esse dicta ullam doloremque temporibus ipsa culpa rem magni alias voluptate quo corrupti, nesciunt ducimus repellat impedit minus iure, eveniet laboriosam voluptatem. Blanditiis placeat, eaque nisi, cupiditate, tenetur quod excepturi vitae repellat est a ipsa cumque porro? Hic, quos atque.',
@@ -273,7 +272,6 @@ $s->new_post( $post_args );
 ```PHP
 $s = new Starky;
 
-// This array is only necessary if not using $_POST or $_GET or if you need to pass more information
 $post_args = [
 	'id' => 2, // Required for update
 	'title' => 'Updated Post Title'
