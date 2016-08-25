@@ -15,7 +15,7 @@
       `id` int(11) NOT NULL AUTO_INCREMENT,
       `title` text NOT NULL,
       `content` mediumtext NOT NULL,
-      `author_id` int(11) NOT NULL,
+      `author_id` int(11),
       `date_created` datetime NOT NULL,
       `date_published` datetime DEFAULT NULL,
       `date_updated` datetime DEFAULT NULL,

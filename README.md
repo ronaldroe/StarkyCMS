@@ -6,7 +6,11 @@
 
 Starky is an AJAX-ready content storage and retrieval developer API ideal for blogging platforms and simple page management.
 
-*Note: This CMS is in alpha. All security is on the developer. While the user table does have a password column, it is not ready for use in a secure environment. TL;DR - Don't use this for anything where security is a concern.*
+*Note: This CMS is in alpha. All security is on the developer. While the user table _does_ have a password column, it is not ready for use in a secure environment. TL;DR - Don't use this for anything where security is a concern.*
+
+##Requirements
+- PHP 5.4+
+- MySQL
 
 ----
 ##To Do
@@ -15,11 +19,12 @@ Near term:
 
 - Automatic Excerpts
 - Author/user setters
+- Custom ordering
 
 Long term:
 
 - Menus
-- Standard backend
+- Optional backend
 
 ----
 #Installation
@@ -169,6 +174,10 @@ The arguments array is optional in this context. $_GET and $_POST are passed aut
 ----
 ##Starky Standard Arguments
 
+###*author_id - int*
+Sets the id of the user to be associated with the post as the author
+Works with: set methods
+
 ###*col_names - array*
 Used to target posts table columns that do not have an attached argument.
 Works with: get_posts()
@@ -311,3 +320,26 @@ $post_args = [
 $s = new Starky( $post_args );
 // $s->output is 1 if successful, error text if fails
 ```
+
+#License
+##MIT License
+
+Copyright (c) 2016 Ronald Roe
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

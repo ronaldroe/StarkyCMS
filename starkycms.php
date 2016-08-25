@@ -1,17 +1,41 @@
 <?php
 
 /* 
- * StarkyCMS is a simple, "headless" content management system by Ronald Roe.
- * By design, there is no built-in gui. What is contained in this class is a series of methods
- * designed to manipulate, store and retrieve page content. The methods are simply a way to 
- * communicate with a database. It's up to the developer to figure out what to do with it.
  * 
- * LICENSING
- * I probably won't add a license or other terms or conditions to this. I really just want it to
- * be useful for people, so do what you want. If you do use it, it'd be pretty cool if you linked
- * back to either THE WEBSITE or my personal site, http://ronaldroe.com. Or don't. That's fine too.
- * It'd also be pretty cool if you sent an email to ron@ronaldroe.com so I can check out what
- * you used it for.
+ * My only request other than the very basic terms of the MIT license is as
+ * follows:
+ * 
+ * Send me an email at ron@ronaldroe.com with a link and/or description of
+ * what you've used this for. You are not bound by this request in any way,
+ * but I'm interested in what people use this for.
+ * 
+ * Thanks,
+ * 
+ * Ron
+ * 
+ * 
+ * MIT License
+ * 
+ * Copyright (c) 2016 Ronald Roe
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * 
  */
 
 
@@ -182,9 +206,15 @@ class Starky {
 		/// Add author info to each post and decode post_meta
 		for( $i = 0; $i < count( $posts ); $i++ ){
 
-			$author = $this->mysql_get_author( $con, $posts[$i]['author_id']);
+			if( isset( $posts[$i]['author_id'] ) ){
 
-			$posts[$i]['author'] = $author;
+				$author = $this->mysql_get_author( $con, $posts[$i]['author_id'] );
+
+				$posts[$i]['author'] = $author;
+
+			}
+
+			unset( $posts[$i]['author_id'] );
 
 			if( isset( $posts[$i]['post_meta'] ) ){
 
@@ -199,8 +229,6 @@ class Starky {
 				}
 
 			}
-
-			unset( $posts[$i]['author_id'] );
 
 		}
 
@@ -299,9 +327,14 @@ class Starky {
 
 		// Add author info
 		{
-			$page['author'] = $this->mysql_get_author( $con, $page['author_id'] );
 
-			unset( $page['author_id'] );
+			if( isset( $page['author_id'] ) ){
+
+				$page['author'] = $this->mysql_get_author( $con, $page['author_id'] );
+
+				unset( $page['author_id'] );
+
+			}
 			
 			$post_meta_temp = json_decode( $page['post_meta'] );
 			
